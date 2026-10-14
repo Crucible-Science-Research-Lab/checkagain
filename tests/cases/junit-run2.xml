@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="ci" tests="4">
+  <testcase classname="tests.test_a" name="test_lookup" time="1.2"></testcase>
+  <testcase classname="tests.test_b" name="test_lookup" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_a" name="test_pay" time="1.2"><error message="boom">RuntimeError</error></testcase>
+  <testcase classname="tests.test_a" name="test_slow" time="1.2"><skipped message="no key"/></testcase>
+</testsuite></testsuites>

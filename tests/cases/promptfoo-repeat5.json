@@ -1,0 +1,908 @@
+{
+ "evalId": "derived-repeat-example",
+ "results": {
+  "version": 3,
+  "results": [
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "3d8d47d5-c198-42e5-9387-e1677705048e",
+    "latencyMs": 3,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 0,
+    "vars": {
+     "language": "French",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-0-vars-0",
+    "repeatIndex": 0
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "f443fbde-6fe0-4918-8374-2a1806de375e",
+    "latencyMs": 14,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 1,
+    "vars": {
+     "language": "French",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-1-vars-0",
+    "repeatIndex": 0
+   },
+   {
+    "cost": 6.449999999999999e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "657a9223-a33d-416d-9a80-a2770fe88d5c",
+    "latencyMs": 8,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 2,
+    "vars": {
+     "language": "Pirate",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-2-vars-0",
+    "repeatIndex": 0
+   },
+   {
+    "cost": 9.45e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "a5b11097-af01-4869-aec7-b3ba428aa926",
+    "latencyMs": 4,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 3,
+    "vars": {
+     "language": "Pirate",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-3-vars-0",
+    "repeatIndex": 0
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "3d8d47d5-c198-42e5-9387-e1677705048e",
+    "latencyMs": 3,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 4,
+    "vars": {
+     "language": "French",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-0-vars-0",
+    "repeatIndex": 1
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "f443fbde-6fe0-4918-8374-2a1806de375e",
+    "latencyMs": 14,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 5,
+    "vars": {
+     "language": "French",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-1-vars-0",
+    "repeatIndex": 1
+   },
+   {
+    "cost": 6.449999999999999e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "657a9223-a33d-416d-9a80-a2770fe88d5c",
+    "latencyMs": 8,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 6,
+    "vars": {
+     "language": "Pirate",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-2-vars-0",
+    "repeatIndex": 1
+   },
+   {
+    "cost": 9.45e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "a5b11097-af01-4869-aec7-b3ba428aa926",
+    "latencyMs": 4,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 7,
+    "vars": {
+     "language": "Pirate",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-3-vars-0",
+    "repeatIndex": 1
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "3d8d47d5-c198-42e5-9387-e1677705048e",
+    "latencyMs": 3,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 8,
+    "vars": {
+     "language": "French",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-0-vars-0",
+    "repeatIndex": 2
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "f443fbde-6fe0-4918-8374-2a1806de375e",
+    "latencyMs": 14,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 9,
+    "vars": {
+     "language": "French",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-1-vars-0",
+    "repeatIndex": 2
+   },
+   {
+    "cost": 6.449999999999999e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "657a9223-a33d-416d-9a80-a2770fe88d5c",
+    "latencyMs": 8,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 10,
+    "vars": {
+     "language": "Pirate",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-2-vars-0",
+    "repeatIndex": 2
+   },
+   {
+    "cost": 9.45e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "a5b11097-af01-4869-aec7-b3ba428aa926",
+    "latencyMs": 4,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 11,
+    "vars": {
+     "language": "Pirate",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-3-vars-0",
+    "repeatIndex": 2
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "3d8d47d5-c198-42e5-9387-e1677705048e",
+    "latencyMs": 3,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 12,
+    "vars": {
+     "language": "French",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-0-vars-0",
+    "repeatIndex": 3
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "f443fbde-6fe0-4918-8374-2a1806de375e",
+    "latencyMs": 14,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 13,
+    "vars": {
+     "language": "French",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-1-vars-0",
+    "repeatIndex": 3
+   },
+   {
+    "cost": 6.449999999999999e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "657a9223-a33d-416d-9a80-a2770fe88d5c",
+    "latencyMs": 8,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 14,
+    "vars": {
+     "language": "Pirate",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-2-vars-0",
+    "repeatIndex": 3
+   },
+   {
+    "cost": 9.45e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "a5b11097-af01-4869-aec7-b3ba428aa926",
+    "latencyMs": 4,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 15,
+    "vars": {
+     "language": "Pirate",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-3-vars-0",
+    "repeatIndex": 3
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "3d8d47d5-c198-42e5-9387-e1677705048e",
+    "latencyMs": 3,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 16,
+    "vars": {
+     "language": "French",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-0-vars-0",
+    "repeatIndex": 4
+   },
+   {
+    "cost": 4.6499999999999995e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "f443fbde-6fe0-4918-8374-2a1806de375e",
+    "latencyMs": 14,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 1,
+    "success": true,
+    "testCase": {
+     "vars": {
+      "language": "French",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 17,
+    "vars": {
+     "language": "French",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-1-vars-0",
+    "repeatIndex": 4
+   },
+   {
+    "cost": 6.449999999999999e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "657a9223-a33d-416d-9a80-a2770fe88d5c",
+    "latencyMs": 8,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "Hello world"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 18,
+    "vars": {
+     "language": "Pirate",
+     "body": "Hello world"
+    },
+    "repeatGroupId": "test-2-vars-0",
+    "repeatIndex": 4
+   },
+   {
+    "cost": 9.45e-06,
+    "gradingResult": {
+     "pass": true,
+     "score": 1,
+     "reason": "No assertions",
+     "tokensUsed": {
+      "total": 0,
+      "prompt": 0,
+      "completion": 0,
+      "cached": 0
+     },
+     "assertion": null
+    },
+    "id": "a5b11097-af01-4869-aec7-b3ba428aa926",
+    "latencyMs": 4,
+    "namedScores": {},
+    "prompt": {
+     "label": "Rephrase this in {{language}}: {{body}}"
+    },
+    "promptId": "dd3415036994f2d82d0ba70cc5bb2caed82da6ccbdaca8a2174cf3992141c207",
+    "promptIdx": 0,
+    "provider": {
+     "id": "openai:chat:gpt-5.4-mini",
+     "label": ""
+    },
+    "score": 0,
+    "success": false,
+    "testCase": {
+     "vars": {
+      "language": "Pirate",
+      "body": "I'm hungry"
+     },
+     "assert": [],
+     "options": {},
+     "metadata": {}
+    },
+    "testIdx": 19,
+    "vars": {
+     "language": "Pirate",
+     "body": "I'm hungry"
+    },
+    "repeatGroupId": "test-3-vars-0",
+    "repeatIndex": 4
+   }
+  ]
+ }
+}

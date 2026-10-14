@@ -1,0 +1,6 @@
+case,result
+login,pass
+logout,pass
+search,fail
+checkout,pass
+refund,fail

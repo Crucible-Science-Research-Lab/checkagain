@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CheckAgain checks</title>
+<style>
+  :root { --bg: #fafaf8; --fg: #1d1d1b; --muted: #6b6b66; --ok: #2f8f86; --fail: #c4475a; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1d1d1b; --fg: #f2f2ee; --muted: #a3a39c; } }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.5 ui-monospace, Menlo, Consolas, monospace;
+         max-width: 920px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 18px; margin: 0 0 4px; } p { color: var(--muted); margin: 0 0 16px; }
+  h2 { font-size: 15px; margin: 22px 0 6px; }
+  .row { display: grid; grid-template-columns: 48px 1fr; gap: 8px; }
+  .ok { color: var(--ok); } .fail { color: var(--fail); font-weight: 600; } .info { color: var(--muted); }
+  #result { margin-top: 24px; font-size: 17px; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>CheckAgain: checks</h1>
+<p>stats.js and reader.js against note two and note one as published, fixed cases for both tests, and awkward files. Every line must say ok.</p>
+<div id="out"></div>
+<div id="result">running…</div>
+<script src="stats.js"></script>
+<script src="reader.js"></script>
+<script>
+(function () {
+  var out = document.getElementById("out"), passed = 0, failed = 0;
+  function head(t) { var h = document.createElement("h2"); h.textContent = t; out.appendChild(h); }
+  function line(cls, mark, text) {
+    var d = document.createElement("div"); d.className = "row";
+    var a = document.createElement("span"); a.className = cls; a.textContent = mark;
+    var b = document.createElement("span"); b.textContent = text;
+    d.appendChild(a); d.appendChild(b); out.appendChild(d);
+  }
+  function check(name, got, want) {
+    var ok = JSON.stringify(got) === JSON.stringify(want);
+    ok ? passed++ : failed++;
+    line(ok ? "ok" : "fail", ok ? "ok" : "FAIL",
+         name + ": " + JSON.stringify(got) + (ok ? "" : "   expected " + JSON.stringify(want)));
+  }
+  function info(text) { line("info", "·", text); }
+  var S = window.CheckAgainStats;
+
+  head("Fisher's exact test, two-sided (fixed cases, checked against SciPy)");
+  [[5, 5, 4, 5, "1.000", false], [5, 5, 3, 5, "0.444", false], [5, 5, 2, 5, "0.167", false],
+   [5, 5, 1, 5, "0.048", true], [5, 5, 0, 5, "0.008", true], [4, 5, 0, 5, "0.048", true],
+   [10, 10, 5, 10, "0.033", true], [8, 10, 0, 10, "0.001", true], [3, 3, 0, 3, "0.100", false],
+   [3, 5, 5, 5, "0.444", false], [3, 5, 0, 5, "0.167", false]
+  ].forEach(function (c) {
+    var p = S.fisher(c[0], c[1], c[2], c[3]);
+    check(c[0] + "/" + c[1] + " vs " + c[2] + "/" + c[3], [p.toFixed(3), p < S.CLEAR_BELOW], [c[4], c[5]]);
+  });
+
+  head("Sign test for the whole change, two-sided (fixed cases)");
+  [[9, 34, "0.0002", true], [0, 5, "0.0625", false], [0, 6, "0.0313", true], [3, 3, "1.0000", false],
+   [0, 0, "1.0000", false]].forEach(function (c) {
+    var p = S.signTest(c[0], c[1]);
+    check(c[0] + " up, " + c[1] + " down", [p.toFixed(4), p < S.CLEAR_BELOW], [c[2], c[3]]);
+  });
+
+  fetch("demo/note2-opus-deepseek.json").then(function (r) {
+    if (!r.ok) throw new Error("could not read demo/note2-opus-deepseek.json (" + r.status + ")");
+    return r.json();
+  }).then(function (demo) {
+    var res = S.analyse(demo.runs), A = res.bySetup[res.before], B = res.bySetup[res.after];
+    var c = res.compare, v = c.verdict;
+    head("Demo against note two (reports/harbor_import_models_confirmation.txt, dollars.txt)");
+    check("setups, in file order", [res.before, res.after], ["Claude Opus 4.6", "DeepSeek V3.2"]);
+    check("runs", [A.runs, B.runs], [305, 305]);
+    check("tasks, and runs per task", [A.taskCount, B.taskCount, A.runsPerTask, B.runsPerTask],
+          [61, 61, { 5: 61 }, { 5: 61 }]);
+    check("passed", [A.passed, B.passed], [230, 143]);
+    check("Opus's every-time tasks", v.everyBefore, 33);
+    check("held every time on DeepSeek", v.heldEvery, 12);
+    check("not held, but sometimes", [c.matrix.every.sometimes.length, v.everyBefore - v.heldEvery], [13, 21]);
+    check("stopped by itself, but failed",
+          [[A.endings.stoppedFailed, A.endings.stopped], [B.endings.stoppedFailed, B.endings.stopped]],
+          [[37, 260], [119, 259]]);
+    check("recorded dollars per run", [A.cost.perRun.toFixed(3), B.cost.perRun.toFixed(3)], ["0.605", "0.033"]);
+    check("recorded dollars per pass", [A.cost.perPass.toFixed(3), B.cost.perPass.toFixed(3)], ["0.802", "0.069"]);
+
+    head("The whole change on the demo (sign test; checked against SciPy's binomtest)");
+    check("tasks that moved: all, down, up", [c.overall.moved, c.overall.down, c.overall.up], [43, 34, 9]);
+    check("overall reading and p", [c.overall.reading, c.overall.p.toFixed(4)], ["clearly worse", "0.0002"]);
+
+    head("Internal consistency");
+    var cells = 0;
+    Object.keys(c.matrix).forEach(function (x) { Object.keys(c.matrix[x]).forEach(function (y) { cells += c.matrix[x][y].length; }); });
+    check("moves table covers every task", [cells, c.tasksInBoth], [61, 61]);
+    check("readings add up", v.clearWorse + v.clearBetter + v.notClearYet + v.same, 61);
+    info("scored runs: " + A.scored + " of " + A.runs + " against " + B.scored + " of " + B.runs);
+
+    head("What the page will read from these runs (for information; no published figure)");
+    info("bands, Opus: every " + A.bands.every.length + ", sometimes " + A.bands.sometimes.length + ", never " + A.bands.never.length);
+    info("bands, DeepSeek: every " + B.bands.every.length + ", sometimes " + B.bands.sometimes.length + ", never " + B.bands.never.length);
+    info("clear change, worse " + v.clearWorse + "; clear change, better " + v.clearBetter +
+         "; not clear yet " + v.notClearYet + " (worse " + v.notClearWorse + ", better " + v.notClearBetter + "); same " + v.same);
+    info("dependable tasks that never passed after the switch: " + v.dependableLost.length +
+         " (" + v.dependableLost.join(", ") + ")");
+    info("pass rate, all runs: " + (100 * A.rateAll).toFixed(1) + "% against " + (100 * B.rateAll).toFixed(1) + "%");
+  }).then(function () {
+    var R = window.CheckAgainReader;
+    function load(names) {
+      return Promise.all(names.map(function (n) {
+        return fetch(n).then(function (r) { if (!r.ok) throw new Error("could not read " + n); return r.text(); })
+                       .then(function (t) { return { text: t, name: n.split("/").pop() }; });
+      }));
+    }
+    function through(inputs, tweak) {
+      var st = R.read(inputs);
+      if (st.error) return { error: st.error };
+      if (tweak) tweak(st);
+      var out = R.toRows(st);
+      return { st: st, out: out, res: out.rows.length ? S.analyse(out.rows) : null };
+    }
+    function bandsOf(res) {
+      return res.setups.map(function (s) { var b = res.bySetup[s].bands; return [b.every.length, b.sometimes.length, b.never.length]; });
+    }
+    var C = "tests/cases/";
+    return load([C + "tau2-retail-3models.csv", C + "odd-names.csv", C + "one-run.csv", C + "uneven.tsv", C + "scores.csv",
+                 C + "missing.csv", C + "broken.txt", C + "rows.json", "demo/note2-opus-deepseek.json",
+                 C + "junit-before.xml", C + "junit-after.xml", C + "junit-run1.xml", C + "junit-run2.xml", C + "junit-run3.xml",
+                 C + "promptfoo-output.json", C + "promptfoo-repeat5.json"]).then(function (f) {
+      head("Reader: real data, note one's τ²-bench runs (Sierra, MIT; 3 models, 4 runs, 114 tasks)");
+      var t = through([f[0]]);
+      check("columns found", t.st.plans[0].map, { passed: "reward", task: "task_id", run: "trial", cost: "agent_cost", ended: "termination_reason", setup: "model" });
+      check("setups", t.res.setups, ["claude-3-7-sonnet-20250219", "gpt-4.1-2025-04-14", "o4-mini-2025-04-16"]);
+      check("runs per task", t.res.bySetup[t.res.setups[0]].runsPerTask, { 4: 114 });
+      check("passed", t.res.setups.map(function (s) { return t.res.bySetup[s].passed; }), [359, 338, 326]);
+      check("tasks that flip, as note one published (38, 43, 52 of 114)", bandsOf(t.res).map(function (b) { return b[1]; }), [38, 43, 52]);
+      check("every time / sometimes / never", bandsOf(t.res), [[68, 38, 8], [60, 43, 11], [52, 52, 10]]);
+      var paths = t.res.setups.map(function (s) { var P = t.res.bySetup[s].paths; return [P.compared, P.couldHalve, P.couldHalveDependable, P.failShare.toFixed(4)]; });
+      check("path of least tokens: tasks compared, could halve, of which dependable, share spent on failed runs (Python cross-check)",
+            paths, [[100, 0, 0, "0.2311"], [91, 0, 0, "0.2875"], [90, 1, 1, "0.2898"]]);
+      var top = t.res.bySetup["o4-mini-2025-04-16"].paths.tasks[0];
+      check("path of least tokens: widest gap on o4-mini (task 50, typical ÷ cheapest)", [top.task, top.ratio.toFixed(3)], ["50", "3.633"]);
+
+      head("Reader: the example read through the same door as a user's file");
+      var dm = through([f[8]]), A = dm.res.bySetup[dm.res.before], B = dm.res.bySetup[dm.res.after];
+      check("passed", [A.passed, B.passed], [230, 143]);
+      check("stopped by itself, but failed", [[A.endings.stoppedFailed, A.endings.stopped], [B.endings.stoppedFailed, B.endings.stopped]], [[37, 260], [119, 259]]);
+      check("recorded dollars per pass", [A.cost.perPass.toFixed(3), B.cost.perPass.toFixed(3)], ["0.802", "0.069"]);
+      check("whole change", [dm.res.compare.overall.down, dm.res.compare.overall.up, dm.res.compare.overall.reading], [34, 9, "clearly worse"]);
+
+      head("Reader: awkward files");
+      var o = through([f[1]]);
+      check("odd names: columns", o.st.plans[0].map, { passed: "Outcome", task: "Test Case", run: "Attempt #", cost: "Spend ($)", setup: "Variant" });
+      check("odd names: ✓/✗ read as pass/fail", [o.res.bySetup["prompt-v1"].passed, o.res.bySetup["prompt-v2"].passed], [13, 9]);
+      check("odd names: 5/5 → 0/5 is a clear change", o.res.compare.verdict.clearWorse, 1);
+      var one = through([f[2]]);
+      check("one run per task, named after the file", [one.res.setups, one.res.bySetup["one-run"].runsPerTask, one.res.bySetup["one-run"].passed], [["one-run"], { 1: 5 }, 3]);
+      var un = through([f[3]]);
+      check("uneven runs, tab-separated", [un.st.plans[0].kind, un.res.bySetup["uneven"].runsPerTask, bandsOf(un.res)[0]], ["tsv", { 2: 1, 3: 1, 5: 1 }, [1, 1, 1]]);
+      var sc = through([f[4]]);
+      check("scores: recognised, pass line at 1", [sc.st.plans[0].passKind.type, sc.st.plans[0].threshold, sc.res.bySetup["scores"].passed], ["score", 1, 4]);
+      var sc2 = through([f[4]], function (st) { st.plans[0].threshold = 0.5; });
+      check("scores: pass line moved to 0.5", sc2.res.bySetup["scores"].passed, 6);
+      var mi = through([f[5]]), M = mi.res.bySetup["missing"];
+      check("missing values", [mi.out.problems.noTask, mi.out.problems.noScore, M.runs, M.scored, M.passed], [1, 2, 6, 4, 3]);
+      var pa = through([{ text: f[2].text, name: "" }]);
+      check("a paste with no file name is “your agent”", pa.res.setups, ["your agent"]);
+      var br = through([f[6]]);
+      check("broken file: nothing read, nothing guessed", [!!br.st.plans[0].map.task, !!br.st.plans[0].map.passed, br.out.rows.length], [false, false, 0]);
+      var js = through([f[7]]);
+      check("JSON list: columns, endings guessed", [js.st.plans[0].map, js.st.plans[0].normal], [{ passed: "passed", task: "task", ended: "status", setup: "setup" }, ["finished"]]);
+      check("JSON list: stopped by itself, but failed", [[js.res.bySetup.old.endings.stoppedFailed, js.res.bySetup.old.endings.stopped], [js.res.bySetup.new.endings.stoppedFailed, js.res.bySetup.new.endings.stopped]], [[2, 4], [0, 3]]);
+      head("Reader: CI test reports (JUnit XML)");
+      var ju = through([Object.assign({ batch: 0 }, f[9]), Object.assign({ batch: 1 }, f[10])]);
+      check("two reports dropped one after the other: before and after", ju.res.setups, ["before", "after"]);
+      check("repeats in one report (test_x[2-5]) are runs of one test", [ju.res.bySetup.before.taskCount, ju.res.bySetup.before.runsPerTask], [3, { 5: 3 }]);
+      check("passed", [ju.res.bySetup.before.passed, ju.res.bySetup.after.passed], [13, 9]);
+      check("5/5 → 0/5 is a clear change", [ju.res.compare.verdict.clearWorse, ju.res.compare.tasks.map(function (t) { return t.task; })],
+            [1, ["test_cancel", "test_greet", "test_refund"]]);
+      var j3 = through([Object.assign({ batch: 0 }, f[11]), Object.assign({ batch: 0 }, f[12]), Object.assign({ batch: 0 }, f[13])]);
+      var J = j3.res.bySetup["your tests"];
+      check("three reports dropped together are three runs of one setup", [j3.res.setups, J.runsPerTask], [["your tests"], { 3: 3 }]);
+      check("skipped tests left out; errors count as failures", [j3.st.plans[0].skipped, J.runs, J.passed], [3, 9, 7]);
+      head("Reader: eval tool exports (Promptfoo JSON)");
+      var pf = through([f[14]]);
+      check("real output: recognised, 4 tests, one run each, two prompts",
+            [pf.st.plans[0].kind, pf.res.setups.length, pf.res.bySetup[pf.res.setups[0]].runsPerTask], ["promptfoo", 2, { 1: 4 }]);
+      var pr = through([f[15]]), P = pr.res.bySetup[pr.res.setups[0]];
+      check("--repeat 5: repeats grouped into one task", [pr.res.setups, P.runsPerTask, P.passed], [["openai:chat:gpt-5.4-mini"], { 5: 4 }, 11]);
+      check("--repeat 5: every time / sometimes / never", bandsOf(pr.res), [[1, 2, 1]]);
+      check("two classes with the same test name kept apart", Object.keys(J.tasks).sort(),
+            ["test_pay", "tests.test_a::test_lookup", "tests.test_b::test_lookup"]);
+    });
+  }).catch(function (e) {
+    failed++; line("fail", "FAIL", String(e.message || e) +
+      " — open this page through the local server (python3 -m http.server), not straight from disk");
+  }).then(function () {
+    var r = document.getElementById("result");
+    r.className = failed ? "fail" : "ok";
+    r.textContent = failed ? "FAIL: " + failed + " of " + (passed + failed) + " checks did not match"
+                           : "PASS: all " + passed + " checks match";
+    document.title = r.textContent;
+  });
+})();
+</script>
+</body>
+</html>

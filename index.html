@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CheckAgain</title>
+<meta name="description" content="A reliability check for your agent, from the results you already have. Runs in your browser; your file never leaves it.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div><b>CheckAgain</b> <span>by Crucible Science</span></div></header>
+
+  <!-- ════ SLIDE 1 · THE IDEA ════ -->
+  <section class="slide idea">
+    <h1>It passed once. <em>Would it pass again?</em></h1>
+    <p class="why">Agents don’t do the same thing twice. Run one task five times and it may pass three.
+      <b>CheckAgain shows which tasks you can count on, and whether a change really changed anything.</b></p>
+
+    <div class="stage" aria-label="Illustration: four agents, each running one task five times">
+      <div class="stage-head">
+        <div><span class="agent" id="agent">Refund agent</span> <span class="ask" id="ask">“Refund my order #4417”</span></div>
+        <div class="head-right"><span class="tag">Illustration</span><button type="button" class="ctl" id="ctl">Pause</button></div>
+      </div>
+      <svg id="tree" role="img" aria-label="The steps each run took"></svg>
+      <p class="outcome" id="outcome" aria-live="polite"></p>
+      <div class="board" id="board"></div>
+    </div>
+    <p class="caption">CheckAgain reads the dots. The paths are here to show why they differ. Click an agent to watch it again.</p>
+    <p class="next"><a href="#try">Try it on your agent ↓</a> <span class="alt">or <a href="#reading">see a real reading first</a></span></p>
+  </section>
+
+  <!-- ════ SLIDE 2 · YOUR TURN ════ -->
+  <section class="slide turn" id="try">
+    <h2>Try it on your own agent</h2>
+    <p class="lead">Start from what you already do after a change. Nothing to install, no account.</p>
+
+    <div class="turn-grid">
+      <div class="turn-steps">
+        <ol class="steps">
+          <li>Take the 10 cases you already try by hand after a change.</li>
+          <li>Run each one five times, before and after your change, and mark pass or fail.</li>
+          <li>Paste the results into the box, straight from your spreadsheet.</li>
+        </ol>
+        <p class="small">Already have automated tests? Run them five times and drop the reports in the box.</p>
+      </div>
+      <div class="turn-help">
+
+        <p class="label">Too many to run by hand? Let your coding assistant do it</p>
+        <div class="helper">
+          <div class="helper-head">
+            <div><b>Run my cases five times</b><span>No results written down yet, or only one run each.</span></div>
+            <button type="button" class="plain" data-copy="prompt-run">Copy prompt</button>
+          </div>
+          <details><summary>Read the prompt</summary>
+<pre id="prompt-run">I want to check whether my AI agent’s results hold up when run again, using CheckAgain (checkagain.cruciblescience.com). Please:
+1. Find the cases I already test (an eval set or tests in this project), or ask me for the 10 to 20 cases I try by hand after a change.
+2. Write a small script in this project that runs each case 5 times through my agent, the way my code already calls it, and decides pass or fail with the check I already use. If there isn’t one, agree a plain rule with me first; don’t use a model as the judge unless I ask.
+3. Take a setup label from a flag (--setup before / --setup after) and append one row per run to results.csv with the columns task, setup, run, passed, ended, cost_usd (ended: completed, timeout or error; cost only if my client records it).
+4. Before running anything, tell me how many agent calls it will make and roughly what that costs, and wait for my yes.
+Put only task names and outcomes in the file: never prompts, outputs, conversation text, customer data or keys. Don’t upload anything; I’ll drop the file into CheckAgain myself.</pre>
+          </details>
+        </div>
+        <div class="helper">
+          <div class="helper-head">
+            <div><b>Turn my results into the sheet</b><span>Results already exist, in a format CheckAgain doesn’t read.</span></div>
+            <button type="button" class="plain" data-copy="prompt-convert">Copy prompt</button>
+          </div>
+          <details><summary>Read the prompt</summary>
+<pre id="prompt-convert">Turn my existing agent results into a CSV for CheckAgain (checkagain.cruciblescience.com). The results are in: [where your results are].
+Write one row per run with the columns task, setup, run, passed (pass or fail), and, if the data has them, ended (completed if the run stopped by itself, otherwise what stopped it) and cost_usd (as recorded, never estimated). Keep each task’s name the same across runs, number repeats 1, 2, 3…, and use the model or version as the setup.
+Copy results exactly as recorded: don’t invent, fix or drop runs. Put only labels and outcomes in the file: never prompts, outputs, conversation text, customer data or keys. Save it as results.csv and tell me where it is.</pre>
+          </details>
+        </div>
+        <p class="small skill-line">Or install the <b>CheckAgain skill</b>, with the same rules and a checker that confirms the file is ready: <a href="skill/checkagain-skill.zip" download>download it</a> (4 KB). For Claude Code, unzip into <code>~/.claude/skills/</code>.</p>
+      </div>
+
+      <div class="box">
+        <div class="drop" id="drop">
+          <p class="drop-title" id="drop-title">Paste your results here, or drop files on this box</p>
+          <div id="loaded" class="loaded" hidden></div>
+          <textarea id="paste" rows="8" spellcheck="false" aria-label="Paste your results" placeholder="task,run,passed&#10;refund-request,1,pass&#10;refund-request,2,fail&#10;…  (copy the cells straight from your spreadsheet)"></textarea>
+          <div class="actions">
+            <button type="button" id="read-paste" class="primary">Read pasted results</button>
+            <label class="plain filepick">Choose files<input type="file" id="file" multiple accept=".csv,.tsv,.txt,.json,.jsonl,.xml"></label>
+            <label class="plain filepick">Choose a folder<input type="file" id="folder" webkitdirectory multiple></label>
+            <a id="blank" class="plain" download="checkagain-blank.csv" href="#">Blank sheet</a>
+          </div>
+          <p class="small formats">Reads spreadsheets, CSV and JSON files, test reports from your CI, and exports from common eval tools. To compare a change, add the results from before and after.</p>
+          <p class="stays"><b>●</b> Your files stay in your browser. Nothing is uploaded.</p>
+          <p class="stays folder-note">Choosing a folder? Your browser may call it an “upload”: that’s its standard wording. The files are read here and nothing is sent. Dragging the folder onto the box skips the question.</p>
+        </div>
+        <div id="confirm" class="confirm" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ SLIDE 3 · THE READING ════ -->
+  <section class="slide reading" id="reading">
+    <p class="r-label"><span class="tag" id="r-tag">A real reading</span><span id="r-what">Reading the example…</span><a href="#" id="back" class="back" hidden>Back to the example</a></p>
+    <div id="r-body" aria-live="polite"></div>
+    <div id="r-actions" class="r-actions" hidden></div>
+    <details id="details" class="r-details" hidden>
+      <summary>See the details</summary>
+      <div id="details-body"></div>
+    </details>
+    <p class="r-credit" id="r-credit" hidden>Data: Terminal-Bench 2.0 public runs, Apache 2.0.</p>
+
+    <div class="askstrip">
+      <div>
+        <h3>Get a reading of your own agent</h3>
+        <p>Free for the first five agents. We read your agent’s runs before and after a change, and tell you what moved, what it costs and what to check next.</p>
+      </div>
+      <form class="askform" id="ask-form" novalidate>
+        <input id="ask-email" type="email" autocomplete="email" placeholder="you@company.com" aria-label="Your email">
+        <button type="submit" class="primary">Ask for a reading</button>
+        <p id="ask-msg" class="small" aria-live="polite">Only your email is sent, and only when you press the button.</p>
+      </form>
+    </div>
+  </section>
+</div>
+<script src="stats.js"></script>
+<script src="reader.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

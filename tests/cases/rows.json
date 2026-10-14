@@ -1,0 +1,10 @@
+[
+ {"task": "t1", "setup": "old", "passed": true, "status": "finished"},
+ {"task": "t1", "setup": "old", "passed": true, "status": "finished"},
+ {"task": "t1", "setup": "new", "passed": false, "status": "timeout"},
+ {"task": "t1", "setup": "new", "passed": true, "status": "finished"},
+ {"task": "t2", "setup": "old", "passed": false, "status": "finished"},
+ {"task": "t2", "setup": "old", "passed": false, "status": "finished"},
+ {"task": "t2", "setup": "new", "passed": true, "status": "finished"},
+ {"task": "t2", "setup": "new", "passed": true, "status": "finished"}
+]

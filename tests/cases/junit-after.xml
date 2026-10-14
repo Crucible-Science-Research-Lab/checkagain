@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" tests="15">
+  <testcase classname="tests.test_agent" name="test_greet[1-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_greet[2-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_greet[3-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_greet[4-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_greet[5-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_refund[1-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_agent" name="test_refund[2-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_agent" name="test_refund[3-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_agent" name="test_refund[4-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_agent" name="test_refund[5-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+  <testcase classname="tests.test_agent" name="test_cancel[1-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_cancel[2-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_cancel[3-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_cancel[4-5]" time="1.2"></testcase>
+  <testcase classname="tests.test_agent" name="test_cancel[5-5]" time="1.2"><failure message="assert">AssertionError</failure></testcase>
+</testsuite></testsuites>
