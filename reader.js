@@ -427,7 +427,8 @@
     return {
       tasks: Object.keys(tasks).length, setups: setups, minRuns: min, maxRuns: max,
       text: "We read " + Object.keys(tasks).length + " tasks, " + runsText + ", " +
-            (setups.length === 1 ? "one setup" : setups.length + " setups (" + setups.join(", ") + ")") + ", " + passText + "."
+            (setups.length === 1 ? "one setup" : setups.length > 3 ? setups.length + " setups (pick the two to compare below)"
+                                    : setups.length + " setups (" + setups.join(", ") + ")") + ", " + passText + "."
     };
   }
 

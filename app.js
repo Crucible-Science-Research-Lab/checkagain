@@ -588,6 +588,7 @@
     $("r-tag").textContent = tag;
     $("r-what").textContent = label;
     $("back").hidden = example;
+    $("another").hidden = true;          // shown by readIt when there are more setups to pick from
     $("r-credit").hidden = !example;
     $("r-body").replaceChildren.apply($("r-body"), two ? readingTwo(res, notes) : readingOne(res, notes));
     lastReading = { res: res, label: label, tag: tag, notes: notes || [] };
@@ -842,7 +843,8 @@
       ? res.before + " against " + res.after + " · " + res.compare.tasksInBoth + " tasks in both, " + runsPerTaskText(res.bySetup[res.before])
       : res.setups[0] + " · " + A.taskCount + " tasks, " + runsPerTaskText(A);
     render(res, label, "Your results", notes);
-    $("confirm").hidden = true;
+    if (d.setups.length > 2) $("another").hidden = false;   // keep the chooser: pick another pair without loading again
+    else $("confirm").hidden = true;
     $("reading").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -941,6 +943,8 @@
   function showLoaded() {   // what is loaded, inside the box, with Start over
     var box = $("loaded");
     box.replaceChildren();
+    // once files are loaded, the paste box has no job left: hide it so the list and the check sit together
+    $("drop").classList.toggle("has-files", listed.length > 0 && listed.every(function (x) { return x.name && x.name !== "pasted results"; }));
     if (!listed.length) { box.hidden = true; $("drop-title").textContent = "Paste your results here, or drop files on this box"; return; }
     var list = el("ul");
     listed.forEach(function (x) { add(list, el("li", "", x.name || "pasted results")); });
@@ -993,6 +997,11 @@
       begin(loaded);
     });
     $("back").addEventListener("click", function (e) { e.preventDefault(); startOver(); });
+    $("another").addEventListener("click", function (e) {
+      e.preventDefault();
+      var c = $("confirm"); c.scrollIntoView({ behavior: "smooth", block: "center" });
+      var p = $("pick-before"); if (p) p.focus({ preventScroll: true });
+    });
     Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (b) {
       b.addEventListener("click", function () {
         var pre = $(b.getAttribute("data-copy")), label = b.textContent;
