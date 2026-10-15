@@ -294,3 +294,12 @@ h1, h2, h3, .agent, .who b, .drop-title, .helper-head b, .confirm .sentence, .r-
               background: color-mix(in srgb, var(--orange) 6%, transparent); color: var(--fg); }
 .skill-line b { color: var(--orange); font-weight: 500; }
 .skill-line a { color: var(--orange); text-decoration-color: currentColor; }
+
+/* print: always dark ink on white paper, and keep the dots even when the browser leaves out background colours */
+@media print {
+  :root:not([data-theme="light"]), :root[data-theme="light"] {
+    --bg: #fff; --panel: #fff; --fg: #16120e; --muted: #6b6155; --line: #d8cebd; --faint: #e6dccb;
+    --gold: #8f6f2e; --orange: #c94c00; --pass: #2b847c; --fail: #b8394d; --node: #efe7d9; --sel: rgba(143,111,46,.07);
+  }
+  .tdots i, .tlegend i { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

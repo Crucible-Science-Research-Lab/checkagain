@@ -681,21 +681,25 @@
              "\n.report-foot { border-top: 1px solid var(--line); margin-top: 28px; padding: 18px 0 40px; font: 12px/1.6 var(--mono); color: var(--muted); }" +
              "\n.report-foot p { margin: 0 0 6px; }" +
              "\n@media print { .tgroup > summary::before { content: none; } }";
-      var stamp = new Date().toISOString().slice(0, 10);
+      var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };   // local time, not UTC
+      var stamp = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+      var clock = pad(now.getHours()) + pad(now.getMinutes());
       var wrap = el("div", "wrap");
       add(wrap, add(el("div", "report-head"), add(el("span"), el("b", "", "CheckAgain"), txt(" by Crucible Science")), el("span", "", "Report made " + stamp)));
       add(wrap, el("h1", "report-title", "Would it pass again?"));
       add(wrap, reportBody(r));
       var foot = el("div", "report-foot");
       add(foot, el("p", "", "Made with CheckAgain, a free reliability check for AI agents that runs in the browser: checkagain.cruciblescience.com. The results were read on the reader’s own computer; nothing was uploaded."));
-      add(foot, el("p", "", "Method: each task’s runs before and after are compared with Fisher’s exact test (clear below p = 0.05); the whole change with a sign test over the tasks that moved. The report says what moved, never why."));
+      add(foot, el("p", "", r.res.compare
+        ? "Method: each task’s runs before and after are compared with Fisher’s exact test (clear below p = 0.05); the whole change with a sign test over the tasks that moved. The report says what moved, never why."
+        : "Method: each task’s runs are counted as passed or failed. Nothing was compared; add the results from after a change to see what moved."));
       if (r.tag === "A real reading") add(foot, el("p", "", "Example data: Terminal-Bench 2.0 public leaderboard runs, Apache 2.0; analysed in “Same task, cheaper model, five runs” by Crucible Science."));
       add(foot, el("p", "", "Summary: " + summaryLine(r)));
       add(wrap, foot);
       var html = "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
                  "<title>CheckAgain report " + stamp + "</title>\n<style>\n" + css + "\n</style>\n</head>\n<body>\n" + wrap.outerHTML + "\n</body>\n</html>\n";
       var a = el("a"); a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      a.download = "checkagain-report-" + stamp + ".html";
+      a.download = "checkagain-report-" + stamp + "-" + clock + ".html";
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
       btn.textContent = "Download the report";
@@ -764,7 +768,7 @@
     if (ok && out.problems.noScore) add(box, el("p", "small", out.problems.noScore + " run" + (out.problems.noScore === 1 ? " has" : "s have") + " no result; " + (out.problems.noScore === 1 ? "it counts" : "they count") + " as not passed, and the details show the pass rate both ways."));
     if (ok && out.problems.noTask) add(box, el("p", "small", out.problems.noTask + " row" + (out.problems.noTask === 1 ? " has" : "s have") + " no task name and " + (out.problems.noTask === 1 ? "was" : "were") + " left out."));
     state.plans.forEach(function (p) { if (p.skipped) add(box, el("p", "small", p.skipped + " skipped test" + (p.skipped === 1 ? " was" : "s were") + " left out: a skipped test did not run.")); });
-    if (listed.length > 1) add(box, el("p", "small", loaded.length + " files read. Each file without a setup column counts as one setup, named after the file; test reports dropped together are the runs of one setup."));
+    if (listed.length > 1 && loaded.some(function (x) { return !x.harbor; })) add(box, el("p", "small", loaded.length + " files read. Each file without a setup column counts as one setup, named after the file; test reports dropped together are the runs of one setup."));
 
     var grid = el("div", "mapper");
     ROLE_LABELS.forEach(function (rl) {
@@ -811,7 +815,7 @@
         d.setups.forEach(function (name, j) { var o = el("option", "", name); o.value = name; if (j === i) o.selected = true; add(s, o); });
         add(pick, add(el("label"), el("span", "", which === "before" ? "Before" : "After"), s));
       });
-      add(box, el("p", "small", "Your file has " + d.setups.length + " setups. Pick the two to compare."), pick);
+      add(box, el("p", "small", "Your results have " + d.setups.length + " setups. Pick the two to compare."), pick);
     }
     var go = el("button", "primary", "Read it"); go.type = "button"; go.disabled = !ok;
     go.onclick = function () { readIt(rows, d); };
@@ -842,6 +846,23 @@
     $("reading").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // read many files a few at a time, so a large folder never opens thousands of readers at once
+  function inBatches(items, size, fn) {
+    var out = new Array(items.length), next = 0;
+    function worker() {
+      if (next >= items.length) return Promise.resolve();
+      var i = next++;
+      return fn(items[i]).then(function (x) { out[i] = x; return worker(); });
+    }
+    var workers = [];
+    for (var w = 0; w < Math.min(size, items.length); w++) workers.push(worker());
+    return Promise.all(workers).then(function () { return out; });
+  }
+  // the job folder a run sits in: ".../<job>/<trial>/result.json" -> ".../<job>"
+  function jobOf(path, top) {
+    var seg = String(path || "").split("/").filter(Boolean);
+    return seg.length > 2 ? seg.slice(0, -2).join("/") : top;
+  }
   function readOne(f, extra) {
     return new Promise(function (ok) {
       var fr = new FileReader();
@@ -853,7 +874,7 @@
   function readFiles(list) {
     var files = Array.prototype.slice.call(list || []);
     if (!files.length) return;
-    Promise.all(files.map(function (f) { return readOne(f, {}); })).then(addBatch);
+    inBatches(files, 8, function (f) { return readOne(f, {}); }).then(addBatch);
   }
   function addBatch(inputs) {
     if (!inputs.length) return showProblem("Nothing to read in what was dropped.");
@@ -862,7 +883,11 @@
     var shown = inputs.filter(function (x) { return !x.harbor; });
     var folders = {};
     inputs.forEach(function (x) { if (x.harbor) folders[x.top] = (folders[x.top] || 0) + 1; });
-    Object.keys(folders).forEach(function (t) { shown.push({ name: t + "/ (" + folders[t] + " result files)", listOnly: true }); });
+    var tops = Object.keys(folders);
+    tops.slice(0, 3).forEach(function (t) {
+      shown.push({ name: t + "/: " + folders[t].toLocaleString("en-US") + " result file" + (folders[t] === 1 ? "" : "s") + " read, nothing else opened", listOnly: true });
+    });
+    if (tops.length > 3) shown.push({ name: "and " + (tops.length - 3) + " more folders", listOnly: true });
     loaded = loaded.concat(inputs);
     listed = listed.concat(shown);
     begin(loaded.filter(function (x) { return !x.listOnly; }));
@@ -871,21 +896,21 @@
   function readFolderFiles(list) {
     var files = Array.prototype.slice.call(list || []).filter(function (f) { return f.name === "result.json"; });
     if (!files.length) return showProblem("No result.json files in that folder. Pick a job folder, or drop files instead.");
-    Promise.all(files.map(function (f) {
-      var top = (f.webkitRelativePath || f.name).split("/")[0];
-      return readOne(f, { harbor: true, top: top });
-    })).then(addBatch);
+    inBatches(files, 8, function (f) {
+      var path = f.webkitRelativePath || f.name, top = path.split("/")[0];
+      return readOne(f, { harbor: true, top: top, job: jobOf(path, top) });
+    }).then(addBatch);
   }
   function walkEntry(entry, top, out) {
     return new Promise(function (ok) {
       if (entry.isFile) {
         if (entry.name !== "result.json") return ok();
-        entry.file(function (f) { out.push({ file: f, top: top }); ok(); }, function () { ok(); });
+        entry.file(function (f) { out.push({ file: f, top: top, path: entry.fullPath }); ok(); }, function () { ok(); });
       } else if (entry.isDirectory) {
         var rd = entry.createReader(), all = [];
         (function more() {
           rd.readEntries(function (batchOf) {
-            if (!batchOf.length) return Promise.all(all.map(function (e) { return walkEntry(e, top, out); })).then(function () { ok(); });
+            if (!batchOf.length) return inBatches(all, 4, function (e) { return walkEntry(e, top, out); }).then(function () { ok(); });
             all = all.concat(Array.prototype.slice.call(batchOf)); more();
           }, function () { ok(); });
         })();
@@ -897,12 +922,14 @@
     var entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; }).filter(Boolean);
     if (!entries.some(function (e) { return e.isDirectory; })) return readFiles(dt.files);
     var out = [];
-    Promise.all(entries.map(function (e) {
-      if (e.isDirectory) return walkEntry(e, e.name, out);
-      return new Promise(function (ok) { e.file(function (f) { out.push({ file: f, plain: true }); ok(); }, function () { ok(); }); });
-    })).then(function () {
+    entries.reduce(function (p, e) {
+      return p.then(function () {
+        if (e.isDirectory) return walkEntry(e, e.name, out);
+        return new Promise(function (ok) { e.file(function (f) { out.push({ file: f, plain: true }); ok(); }, function () { ok(); }); });
+      });
+    }, Promise.resolve()).then(function () {
       if (!out.length) return showProblem("No result.json files in that folder. Pick a job folder, or drop files instead.");
-      return Promise.all(out.map(function (o) { return readOne(o.file, o.plain ? {} : { harbor: true, top: o.top }); }));
+      return inBatches(out, 8, function (o) { return readOne(o.file, o.plain ? {} : { harbor: true, top: o.top, job: jobOf(o.path, o.top) }); });
     }).then(function (inputs) { if (inputs) addBatch(inputs); });
   }
   function startOver() {

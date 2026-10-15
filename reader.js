@@ -294,26 +294,35 @@
   }
   // Harbor job folders: one result.json per run. Read as note two's importer reads them:
   // pass = reward >= 1; no exception recorded = stopped by itself; cost as recorded.
-  // Each folder dropped (one batch) is one setup, named after the model it records.
+  // Each job folder (and, inside a job, each model) is one setup, named after its model, so a drop
+  // that holds several jobs is never pooled into one reading. Within a drop, older jobs come first.
   function harborPlan(files) {
-    var byBatch = {}, order = [], bad = 0;
+    var byKey = {}, order = [], bad = 0;
     files.forEach(function (f) {
       var r; try { r = JSON.parse(f.text); } catch (e) { bad++; return; }
       if (!r || !r.task_name || !r.trial_name) return;          // the job's own result.json
-      if (!byBatch[f.batch]) { byBatch[f.batch] = { top: f.top || "job", trials: [] }; order.push(f.batch); }
-      byBatch[f.batch].trials.push(r);
+      var mi = ((r.agent_info || {}).model_info) || {}, model = mi.name ? String(mi.name) : "";
+      var job = f.job || f.top || "job", key = (f.batch || 0) + "\u0000" + job + "\u0000" + model;
+      if (!byKey[key]) { byKey[key] = { batch: f.batch || 0, job: job, model: model, top: f.top || "job", first: "", trials: [] }; order.push(key); }
+      var B = byKey[key], s = String(r.started_at || "");
+      if (s && (!B.first || s < B.first)) B.first = s;
+      B.trials.push(r);
     });
     if (!order.length) return { error: "No runs found in this folder: it has no result.json files with a task and a trial." };
+    order.sort(function (x, y) {
+      var a = byKey[x], b = byKey[y];
+      if (a.batch !== b.batch) return a.batch - b.batch;
+      if (a.first !== b.first) return a.first < b.first ? -1 : 1;
+      return a.job < b.job ? -1 : a.job > b.job ? 1 : 0;
+    });
+    var byModel = {};
+    order.forEach(function (k) { var m = byKey[k].model || byKey[k].job.split("/").pop(); byModel[m] = (byModel[m] || 0) + 1; });
     var used = {}, records = [];
-    order.forEach(function (b) {
-      var B = byBatch[b], count = {};
-      B.trials.forEach(function (r) {
-        var mi = ((r.agent_info || {}).model_info) || {};
-        var m = mi.name ? String(mi.name) : "";
-        if (m) count[m] = (count[m] || 0) + 1;
-      });
-      var label = Object.keys(count).sort(function (x, y) { return count[y] - count[x]; })[0] || B.top;
-      if (used[label]) label = B.top + (used[B.top] ? " (" + (order.indexOf(b) + 1) + ")" : "");
+    order.forEach(function (k, n) {
+      var B = byKey[k], jobName = B.job.split("/").pop();
+      var label = B.model || jobName;
+      if (byModel[label] > 1) label += " · " + jobName;           // two jobs with one model: add the job's name
+      if (used[label]) label += " (" + (n + 1) + ")";
       used[label] = 1;
       var byTask = {};
       B.trials.forEach(function (r) { (byTask[r.task_name] = byTask[r.task_name] || []).push(r); });
@@ -335,7 +344,8 @@
       });
     });
     var headers = ["task", "run", "passed", "setup", "ended", "cost"];
-    return { name: order.map(function (b) { return byBatch[b].top; }).join(", "), kind: "harbor", headers: headers, records: records,
+    var tops = []; order.forEach(function (k) { if (tops.indexOf(byKey[k].top) < 0) tops.push(byKey[k].top); });
+    return { name: tops.join(", "), kind: "harbor", headers: headers, records: records,
              map: { task: "task", run: "run", passed: "passed", setup: "setup", ended: "ended", cost: "cost" },
              passKind: { type: "words" }, threshold: 1, normal: ["completed"], setupName: null, unreadable: bad };
   }
