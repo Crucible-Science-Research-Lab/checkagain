@@ -305,6 +305,7 @@ h1, h2, h3, .agent, .who b, .drop-title, .helper-head b, .confirm .sentence, .r-
 }
 
 /* with files loaded: no paste box, so the list, the buttons and the check sit together */
-.drop.has-files #paste, .drop.has-files #read-paste, .drop.has-files #blank, .drop.has-files .formats { display: none; }
+.drop.has-files #paste, .drop.has-files #read-paste, .drop.has-files #blank, .drop.has-files .formats,
+.drop.has-files .folder-note { display: none; }
 .another { margin-left: auto; color: var(--gold); }
 .another:not([hidden]) + .back { margin-left: 18px; }

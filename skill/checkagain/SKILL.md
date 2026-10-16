@@ -36,7 +36,9 @@ runs can never show one. Ten to twenty tasks is a good start.
 3. **Never invent or tidy results.** Every row is a run that really happened, with the result
    it really had. If a run crashed, it failed; record how it ended.
 4. **Ask before spending money or time.** Before running anything, say how many agent calls it
-   will make (tasks × runs × setups) and roughly what that costs, and wait for a yes.
+   will make (tasks × runs × setups) and roughly what that costs, and wait for a yes. For a local or
+   free model the cost is time: say roughly how long the runs will take, from one timed case or a
+   time the person already knows.
 5. **Pass or fail comes from a check the person already trusts**: their existing test, assertion
    or grader. If there is none, agree a plain rule with them first. Do not use a model as the
    judge unless they ask for it.
@@ -61,7 +63,9 @@ Write one short script (in the project's own language) that:
 
 - holds the list of cases: reuse their existing test cases or eval set; if they check by hand,
   ask for the 10 to 20 cases they try after a change;
-- calls their agent the way their code already does, for each case, five times;
+- calls their agent the way their code already does, for each case, five times: import and call
+  their own function, so every prompt, retry and fallback stays in. Never rebuild the model call or
+  copy the prompt into the runner; that tests a copy, not their agent;
 - decides pass or fail with their existing check (rule 5);
 - takes the setup label from a flag or environment variable (`--setup before`), so the same
   script runs before and after the change;
@@ -74,6 +78,8 @@ Keep it small and readable. Show it to the person before running it (rule 4).
 
 Run it once with the current setup (`--setup before`). After the person makes their change
 (model, prompt, harness, settings), run it again with `--setup after`, writing to the same CSV.
+If the runs will take more than a few minutes, give the person the exact command to start it in
+their own terminal, and run it yourself only if they prefer.
 
 ### 4. Check the file, then hand it over
 

@@ -595,9 +595,10 @@
     var acts = $("r-actions");
     acts.replaceChildren();
     var dl = el("button", "primary", "Download the report"); dl.type = "button"; dl.onclick = downloadReport;
+    var pdf = el("button", "plain", "Save as PDF"); pdf.type = "button"; pdf.onclick = savePdf;
     var cp = el("button", "plain", "Copy a summary line"); cp.type = "button";
     cp.onclick = function () { copySummary(cp); };
-    add(acts, dl, cp);
+    add(acts, dl, pdf, cp);
     if (!example && !two && !isOneRun(res.bySetup[res.setups[0]])) {
       var addBtn = el("button", "plain", "Add the other setup to compare"); addBtn.type = "button";
       addBtn.onclick = pointToBox;
@@ -668,10 +669,8 @@
       return main;
     } finally { reportMode = false; }
   }
-  function downloadReport() {
-    var r = lastReading; if (!r) return;
-    var btn = $("r-actions").querySelector("button.primary"); btn.textContent = "Making the report…";
-    Promise.all([fetch("style.css").then(function (x) { return x.text(); })].concat(FONTS.map(function (f) {
+  function makeReport(r) {   // the report as one HTML string, with its file name
+    return Promise.all([fetch("style.css").then(function (x) { return x.text(); })].concat(FONTS.map(function (f) {
       return fetch("fonts/" + f).then(function (x) { return x.arrayBuffer(); }).then(function (b) { return [f, toBase64(b)]; });
     }))).then(function (got) {
       var css = got[0];
@@ -699,13 +698,41 @@
       add(wrap, foot);
       var html = "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
                  "<title>CheckAgain report " + stamp + "</title>\n<style>\n" + css + "\n</style>\n</head>\n<body>\n" + wrap.outerHTML + "\n</body>\n</html>\n";
-      var a = el("a"); a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
-      a.download = "checkagain-report-" + stamp + "-" + clock + ".html";
+      return { html: html, name: "checkagain-report-" + stamp + "-" + clock };
+    });
+  }
+  function downloadReport() {
+    var r = lastReading; if (!r) return;
+    var btn = $("r-actions").querySelector("button.primary"); btn.textContent = "Making the report…";
+    makeReport(r).then(function (rep) {
+      var a = el("a"); a.href = URL.createObjectURL(new Blob([rep.html], { type: "text/html" }));
+      a.download = rep.name + ".html";
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
       btn.textContent = "Download the report";
     }).catch(function () {
       btn.textContent = "Couldn’t make the report";
+    });
+  }
+  // the same report, handed to the browser's own print dialog, where "Save as PDF" lives
+  function savePdf() {
+    var r = lastReading; if (!r) return;
+    var btn = this; btn.textContent = "Opening the print dialog…";
+    makeReport(r).then(function (rep) {
+      var f = el("iframe"); f.setAttribute("aria-hidden", "true");
+      f.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+      f.onload = function () {
+        var w = f.contentWindow; w.document.title = rep.name;
+        var gone = false, clean = function () { if (!gone) { gone = true; f.remove(); } };
+        w.addEventListener("afterprint", clean);
+        setTimeout(clean, 60000);            // in case a browser never says the dialog closed
+        w.focus(); w.print();
+        btn.textContent = "Save as PDF";
+      };
+      f.srcdoc = rep.html;
+      document.body.appendChild(f);
+    }).catch(function () {
+      btn.textContent = "Couldn’t make the PDF";
     });
   }
 

@@ -57,7 +57,7 @@
 1. Find the cases I already test (an eval set or tests in this project), or ask me for the 10 to 20 cases I try by hand after a change.
 2. Write a small script in this project that runs each case 5 times through my agent, the way my code already calls it, and decides pass or fail with the check I already use. If there isn’t one, agree a plain rule with me first; don’t use a model as the judge unless I ask.
 3. Take a setup label from a flag (--setup before / --setup after) and append one row per run to results.csv with the columns task, setup, run, passed, ended, cost_usd (ended: completed, timeout or error; cost only if my client records it).
-4. Before running anything, tell me how many agent calls it will make and roughly what that costs, and wait for my yes.
+4. Before running anything, tell me how many agent calls it will make and roughly what that costs (for a local model, roughly how long), and wait for my yes.
 Put only task names and outcomes in the file: never prompts, outputs, conversation text, customer data or keys. Don’t upload anything; I’ll drop the file into CheckAgain myself.</pre>
           </details>
         </div>
